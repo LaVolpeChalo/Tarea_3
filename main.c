@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "Librerias\Interfaz\interfaz.h"
+#include "Librerias\entregas.h"
 
 int main()
 {
@@ -9,6 +10,7 @@ int main()
 	do
 	{
 		mostrarMenu();
+
 		//Eleccion de la opcion del menu
 		printf("\nElija una opcion: ");
 		scanf("%i", &opcion);
@@ -17,6 +19,7 @@ int main()
 		switch(opcion)
 		{
 			case 1:
+				importarArchivo();
 				break;
 			case 2:
 				break;
