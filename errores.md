@@ -9,3 +9,4 @@
 -Mostrar rutas:\
 -Mejor ruta:\
 -Otros:
+-falta implementar laboratorio "6"
