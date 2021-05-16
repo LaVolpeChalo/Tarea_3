@@ -2,7 +2,7 @@
 Integrantes
 - Sebastián Villalón
 - Jose Osega
-- Bryan Lopez(en rojo)
+- Bryan Lopez
 - Esteban Rodriguez
 
 Cosas a Considerar del Código:
