@@ -41,7 +41,7 @@ void importarArchivo()
 
 	if(archivo == NULL)
 	{
-		printf(red "\nNo se encontro el archivo\n" reset);
+		printf(red "\nNo se encontro el archivo!\n" reset);
 		return;
 	}
 
@@ -53,7 +53,8 @@ void importarArchivo()
 
 	if(cantLineas == 0)
 	{
-		printf(red "\nNo se leyo ninguna linea\n" reset);
+		printf(red "\nNo se leyo ninguna linea!\n" reset);
+		fclose(archivo);
 		return;
 	}
 
@@ -69,10 +70,10 @@ void importarArchivo()
 	if(cont < cantLineas)
 	{
 		printf(blue"\nSe llego al final del archivo\n");
-		printf("Se leyeron unicamente %i lineas\n"reset, cont);
+		printf("Se leyeron unicamente %i lineas!\n"reset, cont);
 	}
-	
-
 
 	printf(green "\nEl archivo se importo correctamente!\n" reset);
+	fclose(archivo);
 }
+
