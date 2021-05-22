@@ -31,6 +31,8 @@ int main()
 				else printf(red"\nNo ha recibido entregas\n"reset);
 				break;
 			case 3:
+				if(tamano != 0) entregasCercanas5(mapaIdentificacion);
+				else printf(red"\nNo ha recibido entregas\n"reset);
 				break;
 			case 4:
 				break;

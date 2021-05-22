@@ -44,6 +44,7 @@ void importarArchivo(HashMap * mapaIdentificacion)
 	printf("\nIngrese el nombre del archivo a importar: ");
 	getchar();
 	scanf("%49[^\n]s", nombreArchivo);
+	//strcpy(nombreArchivo,"tarea3_tsp.txt"); RECORDAR ELIMINARLO CUANDO SE ENTREGUE LA TAREA
 
 	FILE * archivo = fopen(nombreArchivo, "r");
 
@@ -113,4 +114,115 @@ void distanciaEntregas(HashMap * mapaIdentificacion)
 	printf(green "\nSe encontraron ambas entregas\n" reset);
 
 	printf(green "\nLa distancia entre entregas es de %.2lf\n" reset, distanciaDosPuntos(entrega1, entrega2));
+}
+
+void entregasCercanas5(HashMap *mapaIdentificacion)
+{
+	//PRIMERO ENCONTRAMOS TODO LO QUE VAMOS A OCUPAR, EL ENTREGAAUX SIRVE PARA RECCORER LOS PUNTOS
+	int entrega1, entregaAux;
+
+    printf("\nIngrese la identificacion de la entrega: ");
+    scanf("%i", &entrega1);
+
+    tipoEntrega * posicion1 = searchMap(mapaIdentificacion, &entrega1);
+    if(posicion1 == NULL)
+    {
+        printf("\nNo existe la entrega 1\n");
+        return;
+    }
+
+    tipoEntrega * posicionAux = firstMap(mapaIdentificacion);
+    if(posicionAux == NULL)
+    {
+        printf("\nAlgo malo paso\n");
+        return;
+    }
+
+	//AHORA DEFINIMOS TODO LO QUE NECESITAREMOS PARA ENCONTRAR LOS MAS CERCANOS
+    int arreglo[5]; //identificador
+    float arreglo2[5];//distancia
+
+    float distanciaEntregas;
+    float distanciaAux;
+
+    int cont = 0;
+	float maximo = 0;
+	int i,k;
+
+	/*
+		AQUI EMPIEZA LA FUNCION PARA ENCONTRAR AL MAS CERCANO
+		lo que pense al principio es ir encontrando los mas cercanos y guardarlos
+		en un arreglo, pero como pide mostrar el ID y la distancia, ocupo 2.
+		quizas se pueda hacer mejor, pero es una idea.
+	*/
+
+    while(posicionAux != NULL){
+        distanciaEntregas = distanciaDosPuntos(posicion1, posicionAux);
+		if(distanciaEntregas == 0){
+			posicionAux = nextMap(mapaIdentificacion);
+			continue;
+		}
+        if(cont != 0)
+		{
+            if(cont > 4)
+			{
+				//Recorro el arreglo distancia
+				for(i = 0 ; i < 5 ; i++)
+				{
+					//printf("ENTRA2\n\n");
+					if(maximo == arreglo2[i])
+					{
+						if(distanciaEntregas < maximo)
+						{
+							//ESTOS PRINTF SON PARA VER QUIENES CAMBIAN POR CUALES
+							printf(red"ID: %d con distancia %.2lf CAMBIA CON \n"reset,arreglo[i],arreglo2[i]);
+							arreglo[i] = posicionAux->identificacion;
+							arreglo2[i] = distanciaEntregas;
+							printf(green"ID: %d con distancia %.2lf <- \n"reset,arreglo[i],arreglo2[i]);
+
+							//Encontrar otro maximo
+							maximo = 0;
+							for(k = 0 ; k < 5 ; k++)
+								if(maximo < arreglo2[k])	maximo = arreglo2[k];
+							
+							break;
+						}
+					}
+				}
+
+            }
+			else
+			{
+				//printf("\n%d cont",cont);
+                arreglo[cont] = posicionAux->identificacion;
+                arreglo2[cont] = distanciaEntregas;
+				//ESTE PRINTF ES PARA VER QUIENES SON LOS QUE SE GUARDAN PRIMERO
+				printf(green"ID: %d con distancia %.2lf \n"reset,arreglo[cont],arreglo2[cont]);
+				if(maximo < distanciaEntregas) maximo = distanciaEntregas;
+            }
+
+        }
+		else
+		{
+            arreglo[0] = posicionAux->identificacion;
+            arreglo2[0] = distanciaEntregas;
+			//ESTE PRINTF PARA VER QUIEN ES EL PRIMERO EN GUARDARSE
+			printf(blue"ID: %d con distancia %.2lf \n"reset,arreglo[0],arreglo2[0]);
+			maximo = distanciaEntregas;
+        }
+        distanciaAux = distanciaEntregas;
+        posicionAux = nextMap(mapaIdentificacion);
+		cont++;
+    }
+
+	//mostrar EL RESULTADO
+	printf(green"\n\nLas distancias mas cercanas a la posicion con id: %d",posicion1->identificacion);
+	int largo; //Esto sirve para cuando no hay mas de 5 lugares
+	if(cont >= 5) largo = 5;
+	else largo = cont;
+
+	for(i = 0 ; i < largo ; i++){
+		printf("\nID: %d con distancia %.2lf",arreglo[i],arreglo2[i]);
+	}
+	printf("\n"reset);
 }
