@@ -37,6 +37,17 @@ double distanciaDosPuntos(tipoEntrega * posicion1, tipoEntrega * posicion2)
 	return distancia;
 }
 
+tipoEntrega * busquedaPosicion(HashMap * mapaIdentificacion, int identificacion)
+{
+	tipoEntrega * posicionBuscada = searchMap(mapaIdentificacion, &identificacion);
+    if(posicionBuscada == NULL)
+    {
+        printf(red"\nNo existe la entrega\n"reset);
+        return NULL;
+    }
+	return posicionBuscada;
+}
+
 void importarArchivo(HashMap * mapaIdentificacion)
 {
 	char nombreArchivo[50];
@@ -93,23 +104,13 @@ void distanciaEntregas(HashMap * mapaIdentificacion)
 
 	printf("\nIngrese el numero de identificacion de la entrega 1: ");
 	scanf("%i", &identificacion1);
+	tipoEntrega * entrega1 = busquedaPosicion(mapaIdentificacion, identificacion1);
+	if(entrega1 == NULL) return;
 
 	printf("\nIngrese el numero de identificacion de la entrega 2: ");
 	scanf("%i", &identificacion2);
-
-	tipoEntrega * entrega1 = searchMap(mapaIdentificacion, &identificacion1);
-	if(entrega1 == NULL)
-	{
-		printf(red"\nLa entrega 1 no existe\n"reset);
-		return;
-	}
-
-	tipoEntrega * entrega2 = searchMap(mapaIdentificacion, &identificacion2);
-	if(entrega2 == NULL)
-	{
-		printf(red"\nLa entrega 2 no existe\n"reset);
-		return;
-	}
+	tipoEntrega * entrega2 = busquedaPosicion(mapaIdentificacion, identificacion2);
+	if(entrega2 == NULL) return;
 
 	printf(green "\nSe encontraron ambas entregas\n" reset);
 
@@ -119,24 +120,15 @@ void distanciaEntregas(HashMap * mapaIdentificacion)
 void entregasCercanas5(HashMap *mapaIdentificacion)
 {
 	//PRIMERO ENCONTRAMOS TODO LO QUE VAMOS A OCUPAR, EL ENTREGAAUX SIRVE PARA RECCORER LOS PUNTOS
-	int entrega1, entregaAux;
+	int entrega1;
 
     printf("\nIngrese la identificacion de la entrega: ");
     scanf("%i", &entrega1);
 
-    tipoEntrega * posicion1 = searchMap(mapaIdentificacion, &entrega1);
-    if(posicion1 == NULL)
-    {
-        printf("\nNo existe la entrega 1\n");
-        return;
-    }
-
-    tipoEntrega * posicionAux = firstMap(mapaIdentificacion);
-    if(posicionAux == NULL)
-    {
-        printf("\nAlgo malo paso\n");
-        return;
-    }
+    tipoEntrega * posicion1 = busquedaPosicion(mapaIdentificacion, entrega1);
+	if(posicion1 == NULL) return;
+    
+	tipoEntrega * posicionAux = firstMap(mapaIdentificacion);
 
 	//AHORA DEFINIMOS TODO LO QUE NECESITAREMOS PARA ENCONTRAR LOS MAS CERCANOS
     int arreglo[5]; //identificador
@@ -156,9 +148,11 @@ void entregasCercanas5(HashMap *mapaIdentificacion)
 		quizas se pueda hacer mejor, pero es una idea.
 	*/
 
-    while(posicionAux != NULL){
+    while(posicionAux != NULL)
+	{
         distanciaEntregas = distanciaDosPuntos(posicion1, posicionAux);
-		if(distanciaEntregas == 0){
+		if(distanciaEntregas == 0)
+		{
 			posicionAux = nextMap(mapaIdentificacion);
 			continue;
 		}
@@ -189,7 +183,6 @@ void entregasCercanas5(HashMap *mapaIdentificacion)
 						}
 					}
 				}
-
             }
 			else
 			{
@@ -200,7 +193,6 @@ void entregasCercanas5(HashMap *mapaIdentificacion)
 				printf(green"ID: %d con distancia %.2lf \n"reset,arreglo[cont],arreglo2[cont]);
 				if(maximo < distanciaEntregas) maximo = distanciaEntregas;
             }
-
         }
 		else
 		{
@@ -217,12 +209,13 @@ void entregasCercanas5(HashMap *mapaIdentificacion)
 
 	//mostrar EL RESULTADO
 	printf(green"\n\nLas distancias mas cercanas a la posicion con id: %d",posicion1->identificacion);
-	int largo; //Esto sirve para cuando no hay mas de 5 lugares
-	if(cont >= 5) largo = 5;
-	else largo = cont;
+	
+	int largo = 5; 
+	//Esto sirve para cuando no hay mas de 5 lugares
+	if(cont < 5) largo = cont;
 
-	for(i = 0 ; i < largo ; i++){
+	for(i = 0 ; i < largo ; i++)
 		printf("\nID: %d con distancia %.2lf",arreglo[i],arreglo2[i]);
-	}
+	
 	printf("\n"reset);
 }
