@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
+#include "TDA_Mapa\hashmap.h"
 #include "Interfaz\interfaz.h"
 
 typedef struct tipoEntrega
@@ -29,7 +31,13 @@ tipoEntrega * lecturaDeInformacion(char * lineaLeida, int id)
 	return nuevaPosicion;
 }
 
-void importarArchivo()
+double distanciaDosPuntos(tipoEntrega * posicion1, tipoEntrega * posicion2)
+{
+	double distancia = sqrt(pow(posicion1->coordenadaX - posicion2->coordenadaX, 2) + pow(posicion1->coordenadaY - posicion2->coordenadaY, 2));
+	return distancia;
+}
+
+void importarArchivo(HashMap * mapaIdentificacion)
 {
 	char nombreArchivo[50];
 
@@ -64,6 +72,7 @@ void importarArchivo()
 	while(cont != cantLineas && fgets(lineaLeida, 100, archivo) != NULL)
 	{
 		tipoEntrega * nuevaPosicion = lecturaDeInformacion(lineaLeida, cont + 1);
+		insertMap(mapaIdentificacion, &nuevaPosicion->identificacion, nuevaPosicion);
 		cont++;
 	}
 
@@ -77,3 +86,31 @@ void importarArchivo()
 	fclose(archivo);
 }
 
+void distanciaEntregas(HashMap * mapaIdentificacion)
+{
+	int identificacion1, identificacion2;
+
+	printf("\nIngrese el numero de identificacion de la entrega 1: ");
+	scanf("%i", &identificacion1);
+
+	printf("\nIngrese el numero de identificacion de la entrega 2: ");
+	scanf("%i", &identificacion2);
+
+	tipoEntrega * entrega1 = searchMap(mapaIdentificacion, &identificacion1);
+	if(entrega1 == NULL)
+	{
+		printf(red"\nLa entrega 1 no existe\n"reset);
+		return;
+	}
+
+	tipoEntrega * entrega2 = searchMap(mapaIdentificacion, &identificacion2);
+	if(entrega2 == NULL)
+	{
+		printf(red"\nLa entrega 2 no existe\n"reset);
+		return;
+	}
+
+	printf(green "\nSe encontraron ambas entregas\n" reset);
+
+	printf(green "\nLa distancia entre entregas es de %.2lf\n" reset, distanciaDosPuntos(entrega1, entrega2));
+}
