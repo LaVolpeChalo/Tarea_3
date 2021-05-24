@@ -5,6 +5,7 @@
 
 #include "TDA_Mapa\hashmap.h"
 #include "Interfaz\interfaz.h"
+#include "TDA_Mapa\list.h"
 
 typedef struct tipoEntrega
 {
@@ -12,6 +13,33 @@ typedef struct tipoEntrega
 	long long coordenadaX;
 	long long coordenadaY;
 }tipoEntrega;
+
+typedef struct tipoRuta
+{
+	char nombreruta[20];
+	int *recorrido;
+	long long cordenada_inicial[2];
+	double total_recorrido;
+
+}tipoRuta;
+
+tipoRuta * nuevodatoruta(long long x,long long y,HashMap *h){
+    tipoRuta *nuevo=(tipoRuta*)malloc(sizeof(tipoRuta));
+	nuevo->recorrido=(int*)calloc(size(h)+1,sizeof(int));
+	nuevo->cordenada_inicial[0]=x;
+	nuevo->cordenada_inicial[1]=y;
+	nuevo->total_recorrido=0;
+	return nuevo;
+}
+
+int yarecorrido(int *recorrido,int id){
+	for(int i=0;recorrido[i]!='\0';i++){
+		if(recorrido[i]==id){
+			return 1;
+		}
+	}
+	return 0;
+}
 
 tipoEntrega * lecturaDeInformacion(char * lineaLeida, int id)
 {
@@ -218,4 +246,126 @@ void entregasCercanas5(HashMap *mapaIdentificacion)
 		printf("\nID: %d con distancia %.2lf",arreglo[i],arreglo2[i]);
 	
 	printf("\n"reset);
+}
+
+void crearruta(HashMap *mapaIdentificacion,List *listarutas){
+
+	long long x,y;
+	int destino,impreso;
+	int aimprimir=size(mapaIdentificacion);
+	tipoEntrega *actual;
+	tipoEntrega *minimo;
+
+    ///Se le solicita al usuario el ingreso de las coordenadas iniciales
+	printf("\nIngrese las coordenadas correspondientes: \n");
+	printf("Coordenada x: ");
+	getchar();
+	scanf("%lli",&x);
+	printf("Coordenada y: ");
+	getchar();
+	scanf("%lli",&y);
+
+	tipoRuta * ruta = nuevodatoruta(x,y,mapaIdentificacion);
+	int entregasrealizadas = 0;
+
+
+    ///Mientras la cantidad de entregas realizadas en la ruta no sea igual al tamaño del total de las entregas, esta seguirá iterando
+	while(entregasrealizadas < size(mapaIdentificacion)){
+
+		printf("\nLista de proximos destinos y su distancia: \n");
+		tipoEntrega *node;
+		double mayord=0;
+		double menord;
+	    double ultimad=0;
+        
+		///Se crea el tipo de dato en caso de ser su primer uso
+		if(entregasrealizadas == 0){
+
+			actual = (tipoEntrega*)calloc(1,sizeof(tipoEntrega));
+			actual->coordenadaX = x;
+			actual->coordenadaY = y;
+		}
+        
+		///Se recoge el mayor recorrido
+		node=firstMap(mapaIdentificacion);
+		do
+		{
+			if(yarecorrido(ruta->recorrido,node->identificacion));
+			else{
+				if(distanciaDosPuntos(node,actual)>mayord){
+					mayord=distanciaDosPuntos(node,actual);
+				}
+			}
+			node=nextMap(mapaIdentificacion);
+		} while (node!=NULL);
+
+        /*Se comienza la impresión desde el menor al mayor dato por medio de iteraciones donde se busca un dato menor al máximo
+		pero mayor al último dato impreso*/
+		do{
+			node=firstMap(mapaIdentificacion);
+			menord=mayord;
+			do{
+			    if(yarecorrido(ruta->recorrido,node->identificacion));
+			    else{
+				    if(distanciaDosPuntos(actual,node) <= menord && distanciaDosPuntos(actual,node) > ultimad){
+					    minimo=node;
+					    menord=distanciaDosPuntos(actual,node);
+					
+				    }
+			    }
+				node = nextMap(mapaIdentificacion);
+			}while(node!=NULL);
+			printf("%d)%.2lf\n",minimo->identificacion,distanciaDosPuntos(actual,minimo));
+
+			ultimad = menord;
+
+
+		}while(menord!=mayord);
+
+        ///Se le pide al usuario que escoja que destino desea tomar
+		printf("\nEscoja hacia que destino desea desplazarse: ");
+		getchar();
+		scanf("%i",&destino);
+		node = busquedaPosicion(mapaIdentificacion,destino);
+		ruta->recorrido[entregasrealizadas] = destino;
+		ruta->total_recorrido += distanciaDosPuntos(actual,node);
+
+
+		actual->coordenadaX = node->coordenadaX;
+		actual->coordenadaY = node->coordenadaY;
+
+		entregasrealizadas++;
+		printf(green"\nRecorrido actualizado\n"reset);
+
+	}
+	///Finalmente se le pregunta el nombre de la ruta y se envía  a la lista de rutas
+	printf("\nIngrese un nombre para la ruta: ");
+	getchar();
+	fscanf(stdin,"%20[^\n]s",ruta->nombreruta);
+	pushFront(listarutas,ruta);
+	printf(green"Ruta ingresada correctamente\n"reset);
+
+}
+
+void mostrarrutas(List *listarutas){
+	tipoRuta * ruta=first(listarutas);
+
+
+	do{
+
+		printf("\nRuta %s:\n",ruta->nombreruta);
+		printf("\nCoordenada inicial: %lli,%lli\n",ruta->cordenada_inicial[0],ruta->cordenada_inicial[1]);
+		printf("Recorrido: [");
+
+		for(int j=0;ruta->recorrido[j]!='\0';j++){
+
+			if(ruta->recorrido[j+1]=='\0') printf("%d]",ruta->recorrido[j]);
+			else printf("%d,",ruta->recorrido[j]);
+
+		}
+
+		printf("\nCantidad a recorrer: %.2lf\n",ruta->total_recorrido);
+		ruta=next(listarutas);
+
+	}while(ruta!=NULL);
 }

@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "Librerias\TDA_Mapa\hashmap.h"
+#include "Librerias\TDA_Mapa\list.h"
 #include "Librerias\Interfaz\interfaz.h"
 #include "Librerias\entregas.h"
 
@@ -8,6 +9,7 @@ int main()
 {
 	short opcion;
 	HashMap * mapaIdentificacion = createMap(10);
+	List * Listarutas = createList();
 	int tamano;
 
 	do
@@ -35,12 +37,16 @@ int main()
 				else printf(red"\nNo ha recibido entregas\n"reset);
 				break;
 			case 4:
+			    if(tamano != 0) crearruta(mapaIdentificacion,Listarutas);
+				else printf(red"\nNo ha recibido entregas\n"reset);
 				break;
 			case 5:
 				break;
 			case 6:
 				break;
 			case 7:
+			    if(Listarutas != NULL) mostrarrutas(Listarutas);
+				else printf(red"\nNo hay rutas creadas\n"reset); 
 				break;
 			case 8:
 				break;
