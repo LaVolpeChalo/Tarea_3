@@ -41,6 +41,70 @@ int yarecorrido(int *recorrido,int id){
 	return 0;
 }
 
+int estaenlista(List * nodos,int destino){
+	tipoEntrega * aux=first(nodos);
+	while(aux!=NULL){
+		if(aux->identificacion == destino) return 0;	
+		
+		aux=next(nodos);
+
+	}
+	return 1;
+
+}
+
+double distanciaDosPuntos(tipoEntrega * posicion1, tipoEntrega * posicion2)
+{
+	double distancia = sqrt(pow(posicion1->coordenadaX - posicion2->coordenadaX, 2) + pow(posicion1->coordenadaY - posicion2->coordenadaY, 2));
+	return distancia;
+}
+
+List * nodosadyacentes(HashMap * mapaIdentificacion,tipoEntrega * actual,tipoEntrega *minimo,tipoRuta * ruta){
+	///Se recoge el mayor recorrido
+	    tipoEntrega * node = firstMap(mapaIdentificacion);
+		List * nodos = createList();
+        double mayord = 0;
+		double menord;
+	    double ultimad = 0;
+
+		do
+		{
+			if(yarecorrido(ruta->recorrido,node->identificacion));
+			else{
+				if(distanciaDosPuntos(node,actual)>mayord){
+					mayord = distanciaDosPuntos(node,actual);
+				}
+			}
+			node = nextMap(mapaIdentificacion);
+		} while (node != NULL);
+
+        /*Se comienza la impresión desde el menor al mayor dato por medio de iteraciones donde se busca un dato menor al máximo
+		pero mayor al último dato impreso*/
+		do{
+			node = firstMap(mapaIdentificacion);
+			menord = mayord;
+			do{
+			    if(yarecorrido(ruta->recorrido,node->identificacion));
+			    else{
+				    if(distanciaDosPuntos(actual,node) <= menord && distanciaDosPuntos(actual,node) > ultimad){
+					    minimo = node;
+					    menord = distanciaDosPuntos(actual,node);
+					
+				    }
+			    }
+				node = nextMap(mapaIdentificacion);
+			}while(node != NULL);
+			printf("%d)%.2lf\n",minimo->identificacion,distanciaDosPuntos(actual,minimo));
+			pushFront(nodos,minimo);
+
+			ultimad = menord;
+
+
+		}while(menord != mayord);
+
+	return nodos;
+}
+
 tipoEntrega * lecturaDeInformacion(char * lineaLeida, int id)
 {
 	tipoEntrega * nuevaPosicion = malloc (sizeof(tipoEntrega));
@@ -59,11 +123,6 @@ tipoEntrega * lecturaDeInformacion(char * lineaLeida, int id)
 	return nuevaPosicion;
 }
 
-double distanciaDosPuntos(tipoEntrega * posicion1, tipoEntrega * posicion2)
-{
-	double distancia = sqrt(pow(posicion1->coordenadaX - posicion2->coordenadaX, 2) + pow(posicion1->coordenadaY - posicion2->coordenadaY, 2));
-	return distancia;
-}
 
 tipoEntrega * busquedaPosicion(HashMap * mapaIdentificacion, int identificacion)
 {
@@ -266,6 +325,8 @@ void crearruta(HashMap *mapaIdentificacion,List *listarutas){
 	scanf("%lli",&y);
 
 	tipoRuta * ruta = nuevodatoruta(x,y,mapaIdentificacion);
+
+
 	int entregasrealizadas = 0;
 
 
@@ -286,46 +347,22 @@ void crearruta(HashMap *mapaIdentificacion,List *listarutas){
 			actual->coordenadaY = y;
 		}
         
-		///Se recoge el mayor recorrido
-		node=firstMap(mapaIdentificacion);
-		do
-		{
-			if(yarecorrido(ruta->recorrido,node->identificacion));
-			else{
-				if(distanciaDosPuntos(node,actual)>mayord){
-					mayord=distanciaDosPuntos(node,actual);
-				}
-			}
-			node=nextMap(mapaIdentificacion);
-		} while (node!=NULL);
-
-        /*Se comienza la impresión desde el menor al mayor dato por medio de iteraciones donde se busca un dato menor al máximo
-		pero mayor al último dato impreso*/
-		do{
-			node=firstMap(mapaIdentificacion);
-			menord=mayord;
-			do{
-			    if(yarecorrido(ruta->recorrido,node->identificacion));
-			    else{
-				    if(distanciaDosPuntos(actual,node) <= menord && distanciaDosPuntos(actual,node) > ultimad){
-					    minimo=node;
-					    menord=distanciaDosPuntos(actual,node);
-					
-				    }
-			    }
-				node = nextMap(mapaIdentificacion);
-			}while(node!=NULL);
-			printf("%d)%.2lf\n",minimo->identificacion,distanciaDosPuntos(actual,minimo));
-
-			ultimad = menord;
-
-
-		}while(menord!=mayord);
+        List * nodos=nodosadyacentes(mapaIdentificacion,actual,minimo,ruta);
 
         ///Se le pide al usuario que escoja que destino desea tomar
 		printf("\nEscoja hacia que destino desea desplazarse: ");
-		getchar();
-		scanf("%i",&destino);
+
+		int contador = 0;
+		do{
+
+			if(contador != 0) printf(red"\nPorfavor, ingrese un numero de la lista mostrada en pantalla.\n"reset);
+
+			getchar();
+		    scanf("%i",&destino);
+			contador++;
+			
+		}while(estaenlista(nodos,destino));
+
 		node = busquedaPosicion(mapaIdentificacion,destino);
 		ruta->recorrido[entregasrealizadas] = destino;
 		ruta->total_recorrido += distanciaDosPuntos(actual,node);

@@ -3,7 +3,7 @@
 -Importar Archivo:\
 -Distancia entre entregas:\
 -Mostrar 5 entregas más cercanas: no está mostrandolas en el orden solicitado (más cercana a más lejana)\
--Crear Ruta: Actualizar a grafo implícito¿?\
+-Crear Ruta: \
 -Generar ruta aleatoria:\
 -Mejorar ruta:\
 -Mostrar rutas: Falta imprimir por orden (menor distancia a mayor distancia)\
