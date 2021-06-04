@@ -59,24 +59,28 @@ double distanciaDosPuntos(tipoEntrega * posicion1, tipoEntrega * posicion2)
 	return distancia;
 }
 
-List * nodosadyacentes(HashMap * mapaIdentificacion,tipoEntrega * actual,tipoEntrega *minimo,tipoRuta * ruta){
-	///Se recoge el mayor recorrido
+List * nodosadyacentes(HashMap * mapaIdentificacion,tipoEntrega * actual,tipoRuta * ruta,int limite){
 	    tipoEntrega * node = firstMap(mapaIdentificacion);
 		List * nodos = createList();
         double mayord = 0;
 		double menord;
 	    double ultimad = 0;
+		int impresiones = 0;
+		tipoEntrega * minimo;
+        
+		///Se recoge el mayor recorrido
+		do{
 
-		do
-		{
 			if(yarecorrido(ruta->recorrido,node->identificacion));
 			else{
-				if(distanciaDosPuntos(node,actual)>mayord){
-					mayord = distanciaDosPuntos(node,actual);
-				}
+
+			    if(distanciaDosPuntos(node,actual)>mayord) mayord = distanciaDosPuntos(node,actual);
+
 			}
+
+
 			node = nextMap(mapaIdentificacion);
-		} while (node != NULL);
+		}while (node != NULL);
 
         /*Se comienza la impresión desde el menor al mayor dato por medio de iteraciones donde se busca un dato menor al máximo
 		pero mayor al último dato impreso*/
@@ -84,14 +88,20 @@ List * nodosadyacentes(HashMap * mapaIdentificacion,tipoEntrega * actual,tipoEnt
 			node = firstMap(mapaIdentificacion);
 			menord = mayord;
 			do{
-			    if(yarecorrido(ruta->recorrido,node->identificacion));
+
+
+				if(yarecorrido(ruta->recorrido,node->identificacion));
+
 			    else{
+
 				    if(distanciaDosPuntos(actual,node) <= menord && distanciaDosPuntos(actual,node) > ultimad){
-					    minimo = node;
+
+					   minimo = node;
 					    menord = distanciaDosPuntos(actual,node);
 					
 				    }
 			    }
+	
 				node = nextMap(mapaIdentificacion);
 			}while(node != NULL);
 			printf("%d)%.2lf\n",minimo->identificacion,distanciaDosPuntos(actual,minimo));
@@ -99,6 +109,11 @@ List * nodosadyacentes(HashMap * mapaIdentificacion,tipoEntrega * actual,tipoEnt
 
 			ultimad = menord;
 
+            //Función unicamente utilizada en caso de que el usuario requiera solo una cantidad determinada por el de nodos adyacentes
+			impresiones++;
+			if(impresiones==limite){
+				return nodos;
+			}
 
 		}while(menord != mayord);
 
@@ -214,97 +229,13 @@ void entregasCercanas5(HashMap *mapaIdentificacion)
 
     tipoEntrega * posicion1 = busquedaPosicion(mapaIdentificacion, entrega1);
 	if(posicion1 == NULL) return;
+
+	tipoRuta * ruta=nuevodatoruta(posicion1->coordenadaX,posicion1->coordenadaY,mapaIdentificacion);
     
-	tipoEntrega * posicionAux = firstMap(mapaIdentificacion);
+	printf("\nEntregas mas cercanas: \n");
+	List * aux = nodosadyacentes(mapaIdentificacion,posicion1,ruta,5);
 
-	//AHORA DEFINIMOS TODO LO QUE NECESITAREMOS PARA ENCONTRAR LOS MAS CERCANOS
-    int arreglo[5]; //identificador
-    float arreglo2[5];//distancia
-
-    float distanciaEntregas;
-    float distanciaAux;
-
-    int cont = 0;
-	float maximo = 0;
-	int i,k;
-
-	/*
-		AQUI EMPIEZA LA FUNCION PARA ENCONTRAR AL MAS CERCANO
-		lo que pense al principio es ir encontrando los mas cercanos y guardarlos
-		en un arreglo, pero como pide mostrar el ID y la distancia, ocupo 2.
-		quizas se pueda hacer mejor, pero es una idea.
-	*/
-
-    while(posicionAux != NULL)
-	{
-        distanciaEntregas = distanciaDosPuntos(posicion1, posicionAux);
-		if(distanciaEntregas == 0)
-		{
-			posicionAux = nextMap(mapaIdentificacion);
-			continue;
-		}
-        if(cont != 0)
-		{
-            if(cont > 4)
-			{
-				//Recorro el arreglo distancia
-				for(i = 0 ; i < 5 ; i++)
-				{
-					//printf("ENTRA2\n\n");
-					if(maximo == arreglo2[i])
-					{
-						if(distanciaEntregas < maximo)
-						{
-							//ESTOS PRINTF SON PARA VER QUIENES CAMBIAN POR CUALES
-							printf(red"ID: %d con distancia %.2lf CAMBIA CON \n"reset,arreglo[i],arreglo2[i]);
-							arreglo[i] = posicionAux->identificacion;
-							arreglo2[i] = distanciaEntregas;
-							printf(green"ID: %d con distancia %.2lf <- \n"reset,arreglo[i],arreglo2[i]);
-
-							//Encontrar otro maximo
-							maximo = 0;
-							for(k = 0 ; k < 5 ; k++)
-								if(maximo < arreglo2[k])	maximo = arreglo2[k];
-							
-							break;
-						}
-					}
-				}
-            }
-			else
-			{
-				//printf("\n%d cont",cont);
-                arreglo[cont] = posicionAux->identificacion;
-                arreglo2[cont] = distanciaEntregas;
-				//ESTE PRINTF ES PARA VER QUIENES SON LOS QUE SE GUARDAN PRIMERO
-				printf(green"ID: %d con distancia %.2lf \n"reset,arreglo[cont],arreglo2[cont]);
-				if(maximo < distanciaEntregas) maximo = distanciaEntregas;
-            }
-        }
-		else
-		{
-            arreglo[0] = posicionAux->identificacion;
-            arreglo2[0] = distanciaEntregas;
-			//ESTE PRINTF PARA VER QUIEN ES EL PRIMERO EN GUARDARSE
-			printf(blue"ID: %d con distancia %.2lf \n"reset,arreglo[0],arreglo2[0]);
-			maximo = distanciaEntregas;
-        }
-        distanciaAux = distanciaEntregas;
-        posicionAux = nextMap(mapaIdentificacion);
-		cont++;
-    }
-
-	//mostrar EL RESULTADO
-	printf(green"\n\nLas distancias mas cercanas a la posicion con id: %d",posicion1->identificacion);
 	
-	int largo = 5; 
-	//Esto sirve para cuando no hay mas de 5 lugares
-	if(cont < 5) largo = cont;
-
-	for(i = 0 ; i < largo ; i++)
-		printf("\nID: %d con distancia %.2lf",arreglo[i],arreglo2[i]);
-	
-	printf("\n"reset);
 }
 
 void crearruta(HashMap *mapaIdentificacion,List *listarutas){
@@ -347,7 +278,7 @@ void crearruta(HashMap *mapaIdentificacion,List *listarutas){
 			actual->coordenadaY = y;
 		}
         
-        List * nodos=nodosadyacentes(mapaIdentificacion,actual,minimo,ruta);
+        List * nodos=nodosadyacentes(mapaIdentificacion,actual,ruta,size(mapaIdentificacion)-1);
 
         ///Se le pide al usuario que escoja que destino desea tomar
 		printf("\nEscoja hacia que destino desea desplazarse: ");
