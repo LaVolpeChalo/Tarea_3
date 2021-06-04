@@ -42,15 +42,16 @@ int yarecorrido(int *recorrido,int id){
 }
 
 int estaenlista(List * nodos,int destino){
-	tipoEntrega * aux=first(nodos);
-	while(aux!=NULL){
+	tipoEntrega * aux = first(nodos);
+
+	while(aux != NULL){
+
 		if(aux->identificacion == destino) return 0;	
 		
-		aux=next(nodos);
+		aux = next(nodos);
 
 	}
 	return 1;
-
 }
 
 double distanciaDosPuntos(tipoEntrega * posicion1, tipoEntrega * posicion2)
@@ -241,10 +242,8 @@ void entregasCercanas5(HashMap *mapaIdentificacion)
 void crearruta(HashMap *mapaIdentificacion,List *listarutas){
 
 	long long x,y;
-	int destino,impreso;
-	int aimprimir=size(mapaIdentificacion);
+	int destino;
 	tipoEntrega *actual;
-	tipoEntrega *minimo;
 
     ///Se le solicita al usuario el ingreso de las coordenadas iniciales
 	printf("\nIngrese las coordenadas correspondientes: \n");
@@ -266,9 +265,6 @@ void crearruta(HashMap *mapaIdentificacion,List *listarutas){
 
 		printf("\nLista de proximos destinos y su distancia: \n");
 		tipoEntrega *node;
-		double mayord=0;
-		double menord;
-	    double ultimad=0;
         
 		///Se crea el tipo de dato en caso de ser su primer uso
 		if(entregasrealizadas == 0){
@@ -278,7 +274,7 @@ void crearruta(HashMap *mapaIdentificacion,List *listarutas){
 			actual->coordenadaY = y;
 		}
         
-        List * nodos=nodosadyacentes(mapaIdentificacion,actual,ruta,size(mapaIdentificacion)-1);
+        List * nodos=nodosadyacentes(mapaIdentificacion,actual,ruta,size(mapaIdentificacion));
 
         ///Se le pide al usuario que escoja que destino desea tomar
 		printf("\nEscoja hacia que destino desea desplazarse: ");
@@ -316,24 +312,57 @@ void crearruta(HashMap *mapaIdentificacion,List *listarutas){
 }
 
 void mostrarrutas(List *listarutas){
-	tipoRuta * ruta=first(listarutas);
+	tipoRuta * ruta = first(listarutas);
+	double mayord=0;
+	double menord;
+	double ultimad=0;
+	tipoRuta * minimo;
 
-
+    //Busqueda peor ruta
 	do{
 
-		printf("\nRuta %s:\n",ruta->nombreruta);
-		printf("\nCoordenada inicial: %lli,%lli\n",ruta->cordenada_inicial[0],ruta->cordenada_inicial[1]);
+		if(ruta->total_recorrido > mayord) mayord = ruta->total_recorrido;
+		ruta = next(listarutas);
+
+	}while(ruta != NULL);
+
+    //Se busca la ruta que sea menor a
+	do{
+
+		ruta = first(listarutas);
+		menord = mayord;
+		do{
+
+
+			if(ruta->total_recorrido <= menord && ruta->total_recorrido > ultimad){
+			   minimo = ruta;
+				menord = ruta->total_recorrido;
+					
+			}
+	
+			ruta = next(listarutas);
+
+		}while(ruta != NULL);
+
+
+		printf(blue"\nRuta %s:\n"reset,minimo->nombreruta);
+		printf("\nCoordenada inicial: %lli,%lli\n",minimo->cordenada_inicial[0],minimo->cordenada_inicial[1]);
 		printf("Recorrido: [");
 
-		for(int j=0;ruta->recorrido[j]!='\0';j++){
+		for(int j = 0;minimo->recorrido[j] != '\0';j++){
 
-			if(ruta->recorrido[j+1]=='\0') printf("%d]",ruta->recorrido[j]);
-			else printf("%d,",ruta->recorrido[j]);
+			if(minimo->recorrido[j+1] == '\0') printf("%d]",minimo->recorrido[j]);
+			else printf("%d,",minimo->recorrido[j]);
 
 		}
 
-		printf("\nCantidad a recorrer: %.2lf\n",ruta->total_recorrido);
-		ruta=next(listarutas);
+		printf("\nCantidad a recorrer: %.2lf\n",minimo->total_recorrido);
 
-	}while(ruta!=NULL);
+		ultimad = menord;
+
+	}while(menord != mayord);
+}
+
+void rutaleatoria(HashMap *mapaIdentificacion,List *listarutas){
+
 }

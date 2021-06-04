@@ -2,11 +2,10 @@
 
 -Importar Archivo:\
 -Distancia entre entregas:\
--Mostrar 5 entregas más cercanas: no está mostrandolas en el orden solicitado (más cercana a más lejana)\
+-Mostrar 5 entregas más cercanas: \
 -Crear Ruta: \
 -Generar ruta aleatoria:\
 -Mejorar ruta:\
--Mostrar rutas: Falta imprimir por orden (menor distancia a mayor distancia)\
+-Mostrar rutas:\
 -Mejor ruta:\
 -Otros:
--falta implementar algoritmos de grafos

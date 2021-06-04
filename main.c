@@ -41,11 +41,13 @@ int main()
 				else printf(red"\nNo ha recibido entregas\n"reset);
 				break;
 			case 5:
+			    if(tamano != 0) rutaleatoria(mapaIdentificacion,Listarutas);
+				else printf(red"\nNo ha recibido entregas\n"reset);
 				break;
 			case 6:
 				break;
 			case 7:
-			    if(Listarutas != NULL) mostrarrutas(Listarutas);
+			    if(get_size(Listarutas) != 0) mostrarrutas(Listarutas);
 				else printf(red"\nNo hay rutas creadas\n"reset); 
 				break;
 			case 8:
