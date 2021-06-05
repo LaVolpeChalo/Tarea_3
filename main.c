@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <time.h>
 
 #include "Librerias\TDA_Mapa\hashmap.h"
 #include "Librerias\TDA_Mapa\list.h"
@@ -11,6 +12,8 @@ int main()
 	HashMap * mapaIdentificacion = createMap(10);
 	List * Listarutas = createList();
 	int tamano;
+
+	srand(time(NULL));
 
 	do
 	{

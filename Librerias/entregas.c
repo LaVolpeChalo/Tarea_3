@@ -54,13 +54,14 @@ int estaenlista(List * nodos,int destino){
 	return 1;
 }
 
+
 double distanciaDosPuntos(tipoEntrega * posicion1, tipoEntrega * posicion2)
 {
 	double distancia = sqrt(pow(posicion1->coordenadaX - posicion2->coordenadaX, 2) + pow(posicion1->coordenadaY - posicion2->coordenadaY, 2));
 	return distancia;
 }
 
-List * nodosadyacentes(HashMap * mapaIdentificacion,tipoEntrega * actual,tipoRuta * ruta,int limite){
+List * nodosadyacentes(HashMap * mapaIdentificacion,tipoEntrega * actual,tipoRuta * ruta,int limite,int print){
 	    tipoEntrega * node = firstMap(mapaIdentificacion);
 		List * nodos = createList();
         double mayord = 0;
@@ -105,7 +106,7 @@ List * nodosadyacentes(HashMap * mapaIdentificacion,tipoEntrega * actual,tipoRut
 	
 				node = nextMap(mapaIdentificacion);
 			}while(node != NULL);
-			printf("%d)%.2lf\n",minimo->identificacion,distanciaDosPuntos(actual,minimo));
+			if(print) printf("%d)%.2lf\n",minimo->identificacion,distanciaDosPuntos(actual,minimo));
 			pushFront(nodos,minimo);
 
 			ultimad = menord;
@@ -234,7 +235,7 @@ void entregasCercanas5(HashMap *mapaIdentificacion)
 	tipoRuta * ruta=nuevodatoruta(posicion1->coordenadaX,posicion1->coordenadaY,mapaIdentificacion);
     
 	printf("\nEntregas mas cercanas: \n");
-	List * aux = nodosadyacentes(mapaIdentificacion,posicion1,ruta,5);
+	List * aux = nodosadyacentes(mapaIdentificacion,posicion1,ruta,5,1);
 
 	
 }
@@ -274,7 +275,7 @@ void crearruta(HashMap *mapaIdentificacion,List *listarutas){
 			actual->coordenadaY = y;
 		}
         
-        List * nodos=nodosadyacentes(mapaIdentificacion,actual,ruta,size(mapaIdentificacion));
+        List * nodos=nodosadyacentes(mapaIdentificacion,actual,ruta,size(mapaIdentificacion),1);
 
         ///Se le pide al usuario que escoja que destino desea tomar
 		printf("\nEscoja hacia que destino desea desplazarse: ");
@@ -364,5 +365,61 @@ void mostrarrutas(List *listarutas){
 }
 
 void rutaleatoria(HashMap *mapaIdentificacion,List *listarutas){
+
+	long long x,y;
+	tipoEntrega * actual;
+	int destino;
+
+    //Se solicitan las coordenadas iniciales
+	printf("\nIngrese las coordenadas correspondientes: \n");
+	printf("Coordenada x: ");
+	getchar();
+	scanf("%lli",&x);
+	printf("Coordenada y: ");
+	getchar();
+	scanf("%lli",&y);
+
+    tipoRuta * ruta = nuevodatoruta(x,y,mapaIdentificacion); 
+
+	int entregasrealizadas = 0;
+
+	while(entregasrealizadas < size(mapaIdentificacion)){
+
+		tipoEntrega *node;
+        
+		///Se crea el tipo de dato en caso de ser su primer uso
+		if(entregasrealizadas == 0){
+
+			actual = (tipoEntrega*)calloc(1,sizeof(tipoEntrega));
+			actual->coordenadaX = x;
+			actual->coordenadaY = y;
+		}
+        
+        List * nodos=nodosadyacentes(mapaIdentificacion,actual,ruta,size(mapaIdentificacion),0);
+
+		do{
+
+			destino = rand() % size(mapaIdentificacion) + 1;
+
+		}while(estaenlista(nodos,destino));
+
+		node = busquedaPosicion(mapaIdentificacion,destino);
+		ruta->recorrido[entregasrealizadas] = destino;
+		ruta->total_recorrido += distanciaDosPuntos(actual,node);
+
+
+		actual->coordenadaX = node->coordenadaX;
+		actual->coordenadaY = node->coordenadaY;
+
+		entregasrealizadas++;
+
+	}
+
+	///Finalmente se le pregunta el nombre de la ruta y se envía  a la lista de rutas
+	printf("\nIngrese un nombre para la ruta: ");
+	getchar();
+	fscanf(stdin,"%20[^\n]s",ruta->nombreruta);
+	pushFront(listarutas,ruta);
+	printf(green"Ruta ingresada correctamente\n"reset);
 
 }
