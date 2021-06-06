@@ -48,6 +48,7 @@ int main()
 				else printf(red"\nNo ha recibido entregas\n"reset);
 				break;
 			case 6:
+			Printf("Mejorar Ruta");
 				break;
 			case 7:
 			    if(get_size(Listarutas) != 0) mostrarrutas(Listarutas);

@@ -423,3 +423,27 @@ void rutaleatoria(HashMap *mapaIdentificacion,List *listarutas){
 	printf(green"Ruta ingresada correctamente\n"reset);
 
 }
+
+//funcion 6 mejorar ruta
+/*
+Void * mejorar_ruta(HashMap *mapaIdentificacion,List *listarutas){
+	printf("Escoja la ruta que desea modificar.");
+	tipoRuta * ruta_modificar = busquedaPosicion(HashMap * mapaIdentificacion, int identificacion);
+	fscanf(stdin, "%20[^\n]s", listarutas);
+	printf(Las ruta son: &listarutas);
+	printf("Escoja cual ruta desea intercambiar");
+	fscanf()
+	fscanf()
+	//calcular la distancia
+	printf("La distancia entre la mejora de ruta es: ");
+	printf("La distancia antes del cambio es:");
+	if(si la distancia es mayor a la anterior)
+	{
+		printf("La nueva distancia es mayor");
+		printf("No se realizo ningun cambio");
+	}else{
+		printf("La nueva distacia es menor");
+		printf("Se guardo la nueva mejora de ruta");
+	}
+}
+*/
