@@ -8,4 +8,6 @@ void crearruta(HashMap *,List *);
 void mostrarrutas(List *);
 void rutaleatoria(HashMap *,List *);
 
+void rutaoptima(HashMap *,List *);
+
 #endif
