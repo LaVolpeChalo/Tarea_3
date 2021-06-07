@@ -435,7 +435,6 @@ void * mejorar_ruta(HashMap *mapaIdentificacion,List *listarutas){
 		if(strcmp(busqueda, aux->nombreruta))break;
 		aux = next(listarutas);
 	}
-<<<<<<< HEAD
 	printf("Las rutas son: \n");
 	for(int i = 0; aux->recorrido[i] != '\0'; i++){
 		if(i = 0){
@@ -505,7 +504,3 @@ void * mejorar_ruta(HashMap *mapaIdentificacion,List *listarutas){
 		printf(green "Se guardo la nueva mejora de ruta"reset);
 	}
 }
-=======
-}
-*/
->>>>>>> parent of 8313d00 (Ruta Optima funcional)
