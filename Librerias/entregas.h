@@ -9,6 +9,4 @@ void mostrarrutas(List *);
 void rutaleatoria(HashMap *,List *);
 void mejorar_ruta(HashMap *, List *);
 
-void rutaoptima(HashMap *,List *);
-
 #endif
