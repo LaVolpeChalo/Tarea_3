@@ -1,0 +1,1 @@
+gcc -o tarea3.exe Librerias/Interfaz/interfaz.c Librerias/entregas.c Librerias/TDA_Mapa/hashmap.c Librerias/TDA_Mapa/list.c  main.c

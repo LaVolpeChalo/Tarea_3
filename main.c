@@ -56,6 +56,8 @@ int main()
 				else printf(red"\nNo hay rutas creadas\n"reset); 
 				break;
 			case 8:
+			    if(tamano != 0) rutaoptima(mapaIdentificacion,Listarutas);
+				else printf(red"\nNo ha recibido entregas\n"reset);
 				break;
 			default:
 				printf(red "\nNo existe tal opcion\n" reset);
