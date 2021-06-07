@@ -48,9 +48,13 @@ int main()
 				else printf(red"\nNo ha recibido entregas\n"reset);
 				break;
 			case 6:
+<<<<<<< HEAD
 			    printf("Mejorar Ruta");
 			 	if(get_size(Listarutas) != 0 ) mejorar_ruta(mapaIdentificacion, Listarutas);
 			 	else printf(red"\n No hay rutas creadas" reset);
+=======
+			Printf("Mejorar Ruta");
+>>>>>>> parent of 8313d00 (Ruta Optima funcional)
 				break;
 			case 7:
 			    if(get_size(Listarutas) != 0) mostrarrutas(Listarutas);
