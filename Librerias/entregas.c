@@ -54,6 +54,15 @@ int estaenlista(List * nodos,int destino){
 	return 1;
 }
 
+int estaenlistaruta(tipoRuta * ruta,int destino,int tamano){
+	for(int i = 0; i <  tamano;i++){
+
+		if(ruta->recorrido[i] == destino) return 0;
+
+	}
+	return 1;
+}
+
 
 double distanciaDosPuntos(tipoEntrega * posicion1, tipoEntrega * posicion2)
 {
@@ -427,80 +436,84 @@ void rutaleatoria(HashMap *mapaIdentificacion,List *listarutas){
 //funcion 6 mejorar ruta
 
 void * mejorar_ruta(HashMap *mapaIdentificacion,List *listarutas){
-	printf("Escoja la ruta que desea modificar.");
+	printf("\nEscriba la ruta que desea modificar.\n");
 	tipoRuta * aux = first(listarutas);
 	char busqueda[20];
+	getchar();
 	fscanf(stdin,"&s",busqueda);
 	while(aux != NULL){
 		if(strcmp(busqueda, aux->nombreruta))break;
 		aux = next(listarutas);
 	}
-	printf("Las rutas son: \n");
-	for(int i = 0; aux->recorrido[i] != '\0'; i++){
-		if(i = 0){
-			printf("[");
-		}	
-
-		printf("%d", aux->recorrido);
-
-		if(aux->recorrido[i+1] == '\0')
-		{
-			printf("]");
-		}
-
-	}
-	
-	printf("Escoja dos entregas que desea intercambiar");
-	int uno, dos;
-	printf("Escoja la primera entrega");
-	do
-	{
-	 scanf("&d", uno);	
-	}while(estaenlista(listarutas, uno));
-
-	printf("escoja la segunda entrega");
-	do
-	{
-	 scanf("&d", dos);	
-	}while(estaenlista(listarutas, dos) && uno != dos);
-
-	//calcular la distancia
-	int * new_recorrido = aux->recorrido;
-	for(int i = 0; new_recorrido[i] != '\0'; i++){
-		if(new_recorrido[i] == uno)
-		{
-			new_recorrido[i] = dos;
-		}
-	}
-	for(int i = 0; new_recorrido[i] != '\0'; i++){
-		if(new_recorrido[i] == dos)
-		{
-			new_recorrido[i] = uno;
-		}
-	}
-	tipoEntrega * aux_entrega = (tipoEntrega*)calloc(1, sizeof(tipoEntrega)); 
-
-	aux_entrega->coordenadaX = aux->cordenada_inicial[0];
-	aux_entrega->coordenadaY = aux->cordenada_inicial[1];
-	double distancia_total = 0;
-	for(int i = 0; new_recorrido[i] != '\0' ;i++)
-	{
-		distancia_total += distanciaDosPuntos(aux_entrega,busquedaPosicion(mapaIdentificacion, new_recorrido[i]));
-		aux_entrega = busquedaPosicion(mapaIdentificacion, new_recorrido[1]);
-
-	}
-	printf("La nueva distancia es: %lf \n", distancia_total);
-
-	printf("La distancia antigua es %lf \n",aux->total_recorrido);
-
-	if(distancia_total > aux->total_recorrido)
-	{
-		printf("La nueva distancia es mayor");
-		printf(red "No se realizo ningun cambio "reset);
+	if(aux == NULL){
+        printf("La Ruta escrita no existe.");
 	}else{
-		aux->recorrido = new_recorrido;
-		aux->total_recorrido = distancia_total;
-		printf("La nueva distacia es menor");
-		printf(green "Se guardo la nueva mejora de ruta"reset);
+
+		printf("Las rutas son: \n");
+	    for(int i = 0; i < size(mapaIdentificacion); i++){
+		    if(i == 0){
+			    printf("[");
+		    }	
+
+		    if(i+1 == size(mapaIdentificacion))
+		    {
+			    printf("%d]",aux->recorrido[i]);
+		    }else printf("%d,", aux->recorrido[i]);
+	    }
+	
+	    printf("\nEscoja dos entregas que desea intercambiar\n");
+	    int uno, dos;
+	    printf("\nEscoja la primera entrega: ");
+	    do{
+
+		    getchar();
+	        scanf("%d", &uno);	
+
+	    }while(estaenlistaruta(aux, uno,size(mapaIdentificacion)));
+
+	    printf("\nEscoja la segunda entrega: ");
+	    do{
+
+		    getchar();
+	        scanf("%d", &dos);	
+
+	    }while(estaenlistaruta(aux, dos,size(mapaIdentificacion)) && uno != dos);
+
+	    //calcular la distancia
+	    int * new_recorrido = aux->recorrido;
+	    for(int i = 0; new_recorrido[i] != '\0'; i++){
+		    if(new_recorrido[i] == uno)	new_recorrido[i] = dos;
+	    }
+
+	    for(int i = 0; new_recorrido[i] != '\0'; i++){
+		    if(new_recorrido[i] == dos) new_recorrido[i] = uno;
+	    }
+
+	    tipoEntrega * aux_entrega = (tipoEntrega*)calloc(1, sizeof(tipoEntrega)); 
+
+	    aux_entrega->coordenadaX = aux->cordenada_inicial[0];
+	    aux_entrega->coordenadaY = aux->cordenada_inicial[1];
+	    double distancia_total = 0;
+	    for(int i = 0; new_recorrido[i] != '\0' ;i++){
+
+		    distancia_total += distanciaDosPuntos(aux_entrega,busquedaPosicion(mapaIdentificacion, new_recorrido[i]));
+		    aux_entrega = busquedaPosicion(mapaIdentificacion, new_recorrido[1]);
+		}
+	    printf("La nueva distancia es: %lf \n", distancia_total);
+
+	    printf("La distancia antigua es %lf \n",aux->total_recorrido);
+
+	    if(distancia_total > aux->total_recorrido){
+
+		    printf("\nLa nueva distancia es mayor\n");
+		    printf(red "\nNo se realizo ningun cambio\n "reset);
+
+	    }else{
+
+		    aux->recorrido = new_recorrido;
+		    aux->total_recorrido = distancia_total;
+		    printf("La nueva distacia es menor\n");
+		    printf(green "Se guardo la nueva mejora de ruta\n"reset);
+	    }
 	}
 }

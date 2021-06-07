@@ -21,7 +21,7 @@ void pushFront(List* list, void* data);
 void pushBack(List* list, void* data);
 void pushCurrent(List* list, void* data);
 void popCurrent(List* list);
-int get_size();
+int get_size(List* list);
 
 
 

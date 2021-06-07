@@ -48,7 +48,6 @@ int main()
 				else printf(red"\nNo ha recibido entregas\n"reset);
 				break;
 			case 6:
-			    printf("Mejorar Ruta");
 			 	if(get_size(Listarutas) != 0 ) mejorar_ruta(mapaIdentificacion, Listarutas);
 			 	else printf(red"\n No hay rutas creadas" reset);
 				break;
