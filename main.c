@@ -48,8 +48,12 @@ int main()
 				else printf(red"\nNo ha recibido entregas\n"reset);
 				break;
 			case 6:
+<<<<<<< Updated upstream
 			 	if(get_size(Listarutas) != 0 ) mejorar_ruta(mapaIdentificacion, Listarutas);
 			 	else printf(red"\n No hay rutas creadas" reset);
+=======
+			 printf("Mejorar Ruta");
+>>>>>>> Stashed changes
 				break;
 			case 7:
 			    if(get_size(Listarutas) != 0) mostrarrutas(Listarutas);
